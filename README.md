@@ -3,7 +3,7 @@ Central repository for Proxmox configuration scripts, LXC service installation s
 
 ## Syntax:
 ```bash
-bash -c "$(wget -qO- https://raw.githubusercontent.com/tylerdotrar/ProxmoxMaster/master/services/install_<SERVICE>.sh)"
+bash -c "$(wget -qO- https://github.com/tylerdotrar/ProxmoxMaster/raw/main/services/<SERVICE>.sh)"
 ```
 ``Note: scripts are being teested on both minimal install Ubuntu Server 22.04 LTS VM and Ubuntu Server 22.04 standard CT.``
 
