@@ -26,6 +26,9 @@ sources_list_bak="${sources_list}.bak" # Backup of original file
 enterprise_list='/etc/apt/sources.list.d/pve-enterprise.list'
 enterprise_list_bak="${enterprise_list}.bak" # Backup of original file
 
+ceph_list='/etc/apt/sources.list.d/ceph.list'
+ceph_list_bak="${ceph_list}.bak" # Backup of original file
+
 
 ### Step 1: Remove enterprise package repository
 print_yellow "[+] Removing 'pve-enterprise' package repository from '$enterprise_list'..."
@@ -38,7 +41,7 @@ echo -e "# Commented out due to no Proxmox License\n# deb https://enterprise.pro
 echo -e " o  Done.\n"
 
 
-### Step 2: Add no-subscription package repository
+### Step 2: Add no-subscription package repository for PVE
 print_yellow "[+] Adding 'pve-no-subscription' package repository to '$sources_list'..."
 
 if grep -q "deb http://download.proxmox.com/debian/pve ${version_codename} pve-no-subscription" $sources_list; then
@@ -49,5 +52,19 @@ else
     echo " o  Backup file created: '$sources_list_bak'"
 
     echo -e "\n# Added due to no Proxmox License\ndeb http://download.proxmox.com/debian/pve ${version_codename} pve-no-subscription" >> $sources_list
+fi
+echo -e " o  Done.\n"
+
+### Step 3: Add no-subscription package repository for ceph
+print_yellow "[+] Adding 'no-subscription' package repository to '$ceph_list'..."
+
+if grep -q "deb http://download.proxmox.com/debian/ceph-quincy ${version_codename} no-subscription" $ceph_list; then
+    echo " o  'no-subscription' package list already exists. Skipping."
+else
+    # Create backup of target file
+    cp $ceph_list $ceph_list_bak
+    echo " o  Backup file created: '$ceph_list_bak'"
+
+    echo -e "\n# Added due to no Proxmox License\ndeb http://download.proxmox.com/debian/ceph-quincy ${version_codename} no-subscription" >> $ceph_list
 fi
 echo -e " o  Done.\n"
