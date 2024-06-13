@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # AUTHOR: Tyler McCann (@tylerdotrar)
-# ARBITRARY VERSION NUMBER: 1.0.1
+# ARBITRARY VERSION NUMBER: 1.0.2
 # LINK: https://github.com/tylerdotrar/ProxmoxMaster
 
 
@@ -32,7 +32,7 @@ echo " o  Backup file created: '$sub_file_bak'"
 line=$(grep -n 'No valid subscription' $sub_file | cut -f1 -d:)
 line_p2=$((line - 1))
 sed -i "${line_p2}c\\\t\t\t//Removed 'No valid subscription' message\n\t\t\tvoid({ //Ext.Msg.show({" $sub_file
-echo " o  Done.\n"
+echo -e " o  Done.\n"
 
 
 ### Step 2: Restart PVE to take effect
