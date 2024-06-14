@@ -21,11 +21,28 @@ I eventually plan on creating a PVE master script that dynamically pulls and dis
 bash -c "$(wget -qO- https://github.com/tylerdotrar/ProxmoxMaster/raw/main/services/<SERVICE>.sh)"
 
 # Management Scripts:
-bash -c "$(wget -qO- https://github.com/tylerdotrar/ProxmoxMaster/raw/main/management/<SERVICE>.sh)"
+bash -c "$(wget -qO- https://github.com/tylerdotrar/ProxmoxMaster/raw/main/management/<FUNCTION>.sh)"
 ```
 - ``Note(s):``
   - Service scripts have been tested on tested on both minimal install Ubuntu Server 22.04 LTS VM and Ubuntu Server 22.04 LXC.
   - Management scripts have been tested on my personal hypervisor; read the code and use at your own risk.
+
+### Management
+
+These scripts are intended to be ran on the server/node itself.
+- These may need to be re-ran after each PVE update.
+- All scripts create backups of the target files prior to modification.
+
+| Script | Description |
+| --- | --- |
+| ``add_cpu_temp_readings.sh`` | Add CPU temperature readings to the Node summary page. |
+| ``fix_enterprise_repositories.sh`` | Fix repositories for personal / non-enterprise use. |
+| ``remove_subscription_message.sh`` | Remove the 'No valid subscription' login message. |
+
+_(Below is an example of the `add_cpu_temp_readings.sh` script.)_
+
+![CPU Temps CLI](https://github.com/tylerdotrar/ProxmoxMaster/assets/69973771/5506d5d3-c704-4204-9117-c2d19abdc9d7)
+![CPU Temps GUI](https://github.com/tylerdotrar/ProxmoxMaster/assets/69973771/173c0380-c81e-4579-8a12-0463e889010d)
 
 ### Supported Services
 
@@ -41,24 +58,3 @@ These scripts are custom service installations that provide a moderate level of 
 | ``organizr.sh`` | WIP |
 | ``passbolt.sh`` | WIP |
 | ``pihole.sh`` | WIP |
-
-![Wiki.js Installation](https://cdn.discordapp.com/attachments/620986290317426698/1035667618956329070/unknown.png)
-- SSH was enabled, and an SSL certificate/key from my local OPNsense CA was SCP'd into '/etc/ssl/wikijs/'
-- Immediately after this screenshot...
-  - I was able to access the initial administration page on ``HTTP/3000``.
-  - I could navigate to HTTPS/3443 following initial administration configuration.
-
-### Management
-
-These scripts are intended to be ran on the server/node itself.
-- These may need to be re-ran after each PVE update.
-- All scripts create backups of the target files prior to modification.
-
-| Script | Description |
-| --- | --- |
-| ``add_cpu_temp_readings.sh`` | Add CPU temperature readings to the Node summary page. |
-| ``fix_enterprise_repositories.sh`` | Fix repositories for personal / non-enterprise use. |
-| ``remove_subscription_message.sh`` | Remove the 'No valid subscription' login message. |
-
-![Summary](https://cdn.discordapp.com/attachments/855920119292362802/1160693073924345887/image.png?ex=653596a9&is=652321a9&hm=b7462e4f472236279dba49219642db92c69673bbbe5a8a0b94b86cbfa85fa2e4&)
-
