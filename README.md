@@ -1,37 +1,42 @@
 # ProxmoxMaster
 Central repository for Proxmox configuration scripts, LXC service installation scripts, etc.
 
+## Usage
+
+```shell
+# Using wget
+bash -c "$(wget -qO- https://tylerdotrar.github.io/ProxmoxMaster)"
+
+# Using curl
+bash -c "$(curl -s https://tylerdotrar.github.io/ProxmoxMaster)"
+```
+
+![Menu](https://github.com/tylerdotrar/ProxmoxMaster/assets/69973771/eafd49ca-d11f-41ed-b82f-9ba6c8eb3d07)
+_(Note: `menu.sh` is being hosted via Github Pages as `index.html` in a separate branch)_
 
 ## Current Goals & Rules:
 
-Create a centralized repository that can automate the install of self-hosted services in a minimal lab environment, providing customizable configuration options.
+**Goals:**
+- Create a centralized repository that can automate the install of self-hosted services in a minimal lab environment, providing customizable configuration options.
 - On top of this, ``the code should be visually pleasing and easily readable (even to novices).``
 
-I eventually plan on creating a PVE master script that dynamically pulls and displays all available services as they're added, and allow users to select their desired service or PVE configuration, all from a singular script/URL.
-
-### Rules
+**Rules:**
 - Services have to be built *without* using/relying on Docker.
-- Scripts and services have to be able to support HTTPS/SSL certificates.
+- Web-based services have to be able to support HTTPS/SSL certificates.
+- Services should have straightforward configuration options before being installed.
 
 ## Services & Management:
 
-### Syntax:
-```bash
-# Service Scripts:
-bash -c "$(wget -qO- https://github.com/tylerdotrar/ProxmoxMaster/raw/main/services/<SERVICE>.sh)"
+### Management Scripts
 
-# Management Scripts:
-bash -c "$(wget -qO- https://github.com/tylerdotrar/ProxmoxMaster/raw/main/management/<FUNCTION>.sh)"
 ```
-- ``Note(s):``
-  - Service scripts have been tested on tested on both minimal install Ubuntu Server 22.04 LTS VM and Ubuntu Server 22.04 LXC.
-  - Management scripts have been tested on my personal hypervisor; read the code and use at your own risk.
+# Manual Execution (ignoring the master menu):
+bash -c "$(wget -qO- https://github.com/tylerdotrar/ProxmoxMaster/raw/main/management/<FUNCTION_NAME>.sh)"
+```
 
-### Management
-
-These scripts are intended to be ran on the server/node itself.
+These scripts are intended to be ran on the Proxmox server/node itself.
 - These may need to be re-ran after each PVE update.
-- All scripts create backups of the target files prior to modification.
+- All scripts create backups of the target files prior to modification (original filename + `.bak`)
 
 | Script | Description |
 | --- | --- |
@@ -46,8 +51,14 @@ _(Below is an example of the `add_cpu_temp_readings.sh` script.)_
 
 ### Supported Services
 
-These scripts are custom service installations that provide a moderate level of user input/customization.
-- These have been tested on tested on both minimal install Ubuntu Server 22.04 LTS VM and Ubuntu Server 22.04 LXC.
+```bash
+# Manual Execution (ignoring the master menu):
+bash -c "$(wget -qO- https://github.com/tylerdotrar/ProxmoxMaster/raw/main/services/<SERVICE_NAME>.sh)"
+```
+
+These scripts are intended to be ran on fresh LXC's/VM's, NOT the Proxmox server/node itself.
+- Service scripts have been tested on tested on both a minimal install Ubuntu Server 22.04 LTS VM and Ubuntu Server 22.04 LXC.
+- These scripts are custom service installations that provide a moderate level of user input/customization prior to install.
 
 | Script | Status |
 | --- | --- |
@@ -55,6 +66,7 @@ These scripts are custom service installations that provide a moderate level of 
 | ``homer.sh`` | Pushed |
 | ``minecraft_server.sh`` | Pushed |
 | ``wikijs.sh``| Pushed |
+| ``nextcloud.sh`` | WIP |
 | ``organizr.sh`` | WIP |
 | ``passbolt.sh`` | WIP |
 | ``pihole.sh`` | WIP |
