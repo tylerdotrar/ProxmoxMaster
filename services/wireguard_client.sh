@@ -1,14 +1,39 @@
 #!/bin/bash
 
-# Modular Script to Add Clients to 'wg0.conf' & Print Client Configurations
-# Arbitrary Version Number: v0.9.9
+# Modular Script to add Clients to 'wg0.conf' & Print Client Configurations
+
+# Arbitrary Version Number: v1.0.0
 # Author: Tyler McCann (@tylerdotrar)
+# Link: https://github.com/tylerdotrar/ProxmoxMaster
 
 
 # Establish Pretty Colors
-yellow=$(tput setaf 3)
 red=$(tput setaf 1)
+green=$(tput setaf 2)
+yellow=$(tput setaf 3)
 white=$(tput setaf 7)
+
+
+# Script Headers and Banners
+service="Wireguard Client"
+header=" ${service} Configuration "
+length=${#header}
+
+
+# Dynamically Format and Print Banner
+repeat() {
+  for (( i=1; i<=$1; i++ ))
+  do
+    echo -n "$2"
+  done
+}
+line=$(repeat $length '-')
+
+echo "${green}
+.${line}.
+|${white}${header}${green}|
+'${line}'
+${white}"
 
 
 # Loop Until Variables are Established
@@ -80,13 +105,13 @@ DNS = ${tunnelDNS}
 
 [Peer]
 PublicKey = ${serverPubKey} # Server 
-AllowedIPs = 0.0.0.0/0 
+AllowedIPs = 0.0.0.0/1, 128.0.0.0/1 
 Endpoint = ${serverEndpoint}
 "
 
 
 # Script Summary
-echo "${yellow}[+] Wireguard Client Configuration Summary
+echo "${yellow}[+] Summary
  o  Server-Side: added client '${clientID}' to 'wg0' using '${clientNetwork}' 
  o  Client-Side: generated user Wireguard configuration to copy & paste
 ${white}"

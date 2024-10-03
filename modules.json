@@ -7,8 +7,8 @@
     { "id": 05, "module": "filegator.sh",        "display": "FileGator        -- multi-user web-based file manager"  }
   ],
   "management": [
-    { "id": 05, "module": "add_cpu_temp_readings.sh",       "display": "Add CPU temperature readings to Node summary page."   },
-    { "id": 06, "module": "fix_enterprise_repositories.sh", "display": "Replace Enterprise repos with No-Subscription repos." },
-    { "id": 07, "module": "remove_subscription_message.sh", "display": "Remove 'No Valid Subscription' login message."        }
+    { "id": 06, "module": "add_cpu_temp_readings.sh",       "display": "Add CPU temperature readings to Node summary page."   },
+    { "id": 07, "module": "fix_enterprise_repositories.sh", "display": "Replace Enterprise repos with No-Subscription repos." },
+    { "id": 08, "module": "remove_subscription_message.sh", "display": "Remove 'No Valid Subscription' login message."        }
   ]
 }

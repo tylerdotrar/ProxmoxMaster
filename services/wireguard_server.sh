@@ -1,14 +1,39 @@
 #!/bin/bash
 
 # Simple Wireguard Server Installation Script (tested on Ubuntu 22.04 & 23.10 LXC's)
-# Arbitrary Version Number: v0.9.9
+
+# Arbitrary Version Number: v1.0.0
 # Author: Tyler McCann (@tylerdotrar)
+# Link: https://github.com/tylerdotrar/ProxmoxMaster
 
 
 # Establish Pretty Colors
-yellow=$(tput setaf 3)
 red=$(tput setaf 1)
+green=$(tput setaf 2)
+yellow=$(tput setaf 3)
 white=$(tput setaf 7)
+
+
+# Script Headers and Banners
+service="Wireguard Server"
+header=" ${service} Installation "
+length=${#header}
+
+
+# Dynamically Format and Print Banner
+repeat() {
+  for (( i=1; i<=$1; i++ ))
+  do
+    echo -n "$2"
+  done
+}
+line=$(repeat $length '-')
+
+echo "${green}
+.${line}.
+|${white}${header}${green}|
+'${line}'
+${white}"
 
 
 # Loop Until Variables are Established
@@ -30,14 +55,15 @@ do
 done
 
 
-# Dependencies
+# Updates & Dependencies
 echo "${yellow}[+] Installing dependencies...${white}"
+apt update && apt upgrade -y
 apt install wireguard wireguard-tools -y 
 echo -e "${yellow} o  Done.\n${white}"
 
 
 # Simple Server Setup
-echo "${yellow}[+] Configuring Wireguard server...${white}"
+echo "${yellow}[+] Configuring ${service}...${white}"
 
 # Generate public and private keypair
 wg genkey | tee /etc/wireguard/server_private.key | wg pubkey > /etc/wireguard/server_public.key
@@ -58,6 +84,7 @@ PreDown = iptables -t nat -D POSTROUTING -o eth0 -j MASQUERADE
 
 # Enable IPv4 packet forwarding
 sed -i 's/^#\(net\.ipv4\.ip_forward=1\)/\1/' /etc/sysctl.conf 
+sysctl -p
 
 # Enable Wireguard to start on boot 
 systemctl enable wg-quick@wg0.service --now
@@ -73,7 +100,7 @@ echo -e "${yellow} o  Done.\n${white}"
 
 
 # Script Summary
-echo "${yellow}[+] Wireguard Installation Summary
+echo "${yellow}[+] Summary
  o  Installed: wireguard, wireguard-tools
  o  Generated server public & private keypair
  o  Generated 'wg0' tunnel configuration 

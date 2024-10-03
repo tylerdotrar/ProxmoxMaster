@@ -1,90 +1,87 @@
 #!/bin/bash
 
+# Rough Baseline Template for Installation Scripts 
+
 # Author: Tyler McCann (tylerdotrar)
-# Arbitrary Version Number: 1.0.0
+# Arbitrary Version Number: v0.9.9
 # Link: https://github.com/tylerdotrar/ProxmoxMaster
 
-### Script Headers and Banners
-service='<ADD_STUFF_HERE>'
-header="${service} Installation Script"
+
+# Establish Pretty Colors
+red=$(tput setaf 1)
+green=$(tput setaf 2)
+yellow=$(tput setaf 3)
+white=$(tput setaf 7)
+
+
+# Script Headers and Banners
+service="<SERVICE_NAME_HERE>"
+header=" ${service} Installation "
 length=${#header}
 
+
+# Dynamically Format and Print Banner
 repeat() {
   for (( i=1; i<=$1; i++ ))
   do
     echo -n "$2"
   done
 }
-line=$(repeat $length '=')
+line=$(repeat $length '-')
 
-echo "$(tput setaf 2)${line}$(tput setaf 7)"
-echo "$header"
-echo "$(tput setaf 2)${line}$(tput setaf 7)"
-
-red_input=$(tput setaf 1)
-yellow_prompt=`echo "$(tput setaf 7)[$(tput setaf 3)PROMPT$(tput setaf 7)]  "`
-yellow_final=`echo "$(tput setaf 7)[$(tput setaf 3)FINAL$(tput setaf 7)]   "`
-blue_start=`echo "$(tput setaf 7)[$(tput setaf 4)START$(tput setaf 7)]   "`
-green_notice=`echo "$(tput setaf 7)[$(tput setaf 2)NOTICE$(tput setaf 7)]  "`
+echo "${green}
+.${line}.
+|${white}${header}${green}|
+'${line}'
+${white}"
 
 
-### Prompt for Installation Settings
+# Loop Until Variables are Established
 while :
 do
-  echo -e -n "\n${yellow_prompt}Utilize SSL? (yes/no): ${red_input}"
-  read ssl_prompt
+  echo "${yellow}[+] Variable Configuration${white}"
+  read -p "${white} o  Utilize SSL? (yes/no)                : ${red}" sslPrompt
 
-  if [[ $ssl_prompt == 'yes' || $ssl_prompt == 'y' ]]
-
-  then
-    ssl_bool='true'
-    echo -e -n "${yellow_prompt}-->  HTTPS Port: ${red_input}"
-    read https_port
-    echo -e -n "${yellow_prompt}-->  SSL Certificate Path: ${red_input}"
-    read cert_path
-    echo -e -n "${yellow_prompt}-->  SSL Key Path: ${red_input}"
-    read key_path
-
+  if [[ $sslPrompt == 'yes' || $sslPrompt == 'y' ]]; then
+    sslBool='true'
+    read -p "${white} o  -->  HTTPS Port                      : ${red}" httpsPort
+    read -p "${white} o  -->  SSL Certificate Path            : ${red}" certPath 
+    read -p "${white} o  -->  SSL Key Path                    : ${red}" keyPath
   else
-    ssl_bool='false'
-    https_port='443'
-    cert_path='/etc/ssl/example.crt'
-    key_path='/etc/ssl/example.key'
-	echo -e -n "${yellow_prompt}HTTP Port: ${red_input}"
-    read http_port
+    sslBool='false'
+    httpsPort='443'
+    certPath='/etc/ssl/example.crt'
+    keyPath='/etc/ssl/example.key'
+    read -p "${white} o  HTTP Port                            : ${red}" httpPort 
   fi
 
-  echo -e -n "\n${yellow_prompt}Accept above settings? (yes/no): ${red_input}"
-  read accept_settings
+  # Prompt to Accept above Settings
+  read -p "${yellow}[+] Accept the above settings? (yes/no)${white}  : ${red}" acceptSettings
 
-  if [[ $accept_settings == 'yes' || $accept_settings == 'y' ]]; then
-    tput setaf 7
+  if [[ $acceptSettings == 'yes' || $acceptSettings == 'y' ]]; then
+    echo ""
     break
+  else
+  	echo ""
   fi
 done
 
 
-### Updates & Dependencies
-echo -e "\n${blue_start}Updating and installing dependencies..."
-apt update &>/dev/null
-apt upgrade -y &>/dev/null
-apt install -y <ADD_STUFF_HERE> &>/dev/null
-echo -e "${green_notice}Complete."
+# Updates & Dependencies
+echo "${yellow}[+] Installing dependencies...${white}"
+apt update && apt upgrade -y
+#apt install <DEPENDENCIES_HERE> -y 
+echo -e "${yellow} o  Done.\n${white}"
 
 
-### Download, Install, and Clean-up Service
-echo -e "\n${blue_start}Installing ${service}..."
-<ADD_STUFF_HERE>
-echo -e "${green_notice}Complete."
+# Download, Install, Configure, and/or Clean-up Service
+echo "${yellow}[+] Configuring ${service}...${white}"
+#<ADD_STUFF_HERE>
+echo -e "${yellow} o  Done.\n${white}"
 
 
-### Configuring Service with User Input
-echo -e "\n${blue_start}Configuring ${service} with user input data..."
-<ADD_STUFF_HERE>
-echo -e "${green_notice}Complete."
-
-
-### Finished; Restart Service/Nginx/Apache (just in case)
-sleep 3
-systemctl restart <WEB_SERVICE>
-echo -e "\n${yellow_final}${service} was successfully installed."
+# Script Summary
+echo "${yellow}[+] Summary
+ o  Installed: <DEPENDENCIES>
+ o  <ADD_STUFF_HERE>
+ ${white}"
