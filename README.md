@@ -8,7 +8,7 @@ Central repository for Proxmox configuration scripts, LXC service installation s
 bash -c "$(wget -qO- https://tylerdotrar.github.io/ProxmoxMaster)"
 
 # Using curl
-bash -c "$(curl -s https://tylerdotrar.github.io/ProxmoxMaster)"
+bash -c "$(curl -sL https://tylerdotrar.github.io/ProxmoxMaster)"
 ```
 
 ![Menu](https://github.com/tylerdotrar/ProxmoxMaster/assets/69973771/eafd49ca-d11f-41ed-b82f-9ba6c8eb3d07)
@@ -62,11 +62,13 @@ These scripts are intended to be ran on fresh LXC's/VM's, NOT the Proxmox server
 
 | Script | Status |
 | --- | --- |
+| ``wireguard_server.sh`` | Pushed |
+| ``minecraft_server.sh`` | Pushed |
 | ``filegator.sh`` | Pushed |
 | ``homer.sh`` | Pushed |
-| ``minecraft_server.sh`` | Pushed |
 | ``wikijs.sh``| Pushed |
 | ``nextcloud.sh`` | WIP |
 | ``organizr.sh`` | WIP |
 | ``passbolt.sh`` | WIP |
 | ``pihole.sh`` | WIP |
+| ``samba.sh`` | WIP |
