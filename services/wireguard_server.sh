@@ -1,8 +1,8 @@
 #!/bin/bash
 
-# Simple Wireguard Server Installation Script (tested on Ubuntu 22.04 & 23.10 LXC's)
+# Simple Wireguard Server Installation Script (tested on Ubuntu 22.04/24.04 LTS)
 
-# Arbitrary Version Number: v1.0.0
+# Arbitrary Version Number: v1.0.1
 # Author: Tyler McCann (@tylerdotrar)
 # Link: https://github.com/tylerdotrar/ProxmoxMaster
 
@@ -12,6 +12,13 @@ red=$(tput setaf 1)
 green=$(tput setaf 2)
 yellow=$(tput setaf 3)
 white=$(tput setaf 7)
+
+
+# Validate script is being ran with elevated privileges
+if [ "$EUID" -ne 0 ]; then
+  echo "${red}[-] Script must be ran as root.${white}"
+  exit
+fi
 
 
 # Script Headers and Banners
@@ -32,8 +39,16 @@ line=$(repeat $length '-')
 echo "${green}
 .${line}.
 |${white}${header}${green}|
-'${line}'
-${white}"
+'${line}'${white}"
+
+
+# Print Public & Local IP to aid in determining server endpoint ()
+interface=$(ip route | grep "default" | awk -F 'dev ' '{print $2}' | awk '{print $1}')
+publicIP=$(curl -sL ipinfo.io/ip 2>/dev/null || wget -qO- ipinfo.io/ip 2>/dev/null)
+localIP=$(ip -br a | grep "${interface}" | awk '{print $3}' | awk -F '/' '{print $1}')
+
+echo -e "${green} > Server Public IP ${white}: ${publicIP}"
+echo -e "${green} > Server Local IP  ${white}: ${localIP}\n"
 
 
 # Loop Until Variables are Established
@@ -45,12 +60,12 @@ do
 
   # Prompt to Accept above Settings
   read -p "${yellow}[+] Accept the above settings? (yes/no)${white}                    : ${red}" acceptSettings
+  echo "${white}"
 
   if [[ $acceptSettings == 'yes' || $acceptSettings == 'y' ]]; then
-    echo ""
     break
-  else
-  	echo ""
+  elif [[ $acceptSettings == 'exit' || $acceptSettings == 'quit' ]]; then
+    exit 
   fi
 done
 
@@ -75,11 +90,11 @@ Address = ${tunnelNetwork}
 ListenPort = ${listeningPort}
 PrivateKey = ${serverPrivKey} # Server
 # Tunnel Enabled: enable packet forwarding
-PostUp = ufw route allow in on wg0 out on eth0
-PostUp = iptables -t nat -I POSTROUTING -o eth0 -j MASQUERADE
+PostUp = ufw route allow in on wg0 out on ${interface}
+PostUp = iptables -t nat -I POSTROUTING -o ${interface} -j MASQUERADE
 # Tunnel Disabled: disable packet forwarding
-PreDown = ufw route delete allow in on wg0 out on eth0
-PreDown = iptables -t nat -D POSTROUTING -o eth0 -j MASQUERADE
+PreDown = ufw route delete allow in on wg0 out on ${interface}
+PreDown = iptables -t nat -D POSTROUTING -o ${interface} -j MASQUERADE
 " > /etc/wireguard/wg0.conf
 
 # Enable IPv4 packet forwarding
@@ -93,8 +108,9 @@ systemctl enable wg-quick@wg0.service --now
 ln -s /etc/wireguard/wg0.conf ~/wg0_link.conf
 
 # Download 'wireguard_client.sh' script for easy client configurations
-wget https://raw.githubusercontent.com/tylerdotrar/ProxmoxMaster/refs/heads/main/services/wireguard_client.sh -O ~/wireguard_client.sh
-chmod +x wireguard_client.sh
+clientScript="https://raw.githubusercontent.com/tylerdotrar/ProxmoxMaster/refs/heads/main/services/wireguard_client.sh"
+curl ${clientScript} -o ~/wireguard_client2.sh 2>/dev/null || wget ${clientScript} -O ~/wireguard_client2.sh 2>/dev/null
+chmod +x ~/wireguard_client.sh
 
 echo -e "${yellow} o  Done.\n${white}"
 
@@ -103,7 +119,7 @@ echo -e "${yellow} o  Done.\n${white}"
 echo "${yellow}[+] Summary
  o  Installed: wireguard, wireguard-tools
  o  Generated server public & private keypair
- o  Generated 'wg0' tunnel configuration 
+ o  Generated 'wg0' tunnel configuration using '${interface}' 
  o  Enabled IPv4 packet forwarding
  o  Enabled Wireguard server to start on boot
  o  Created symbolic link to 'wg0.conf' in home directory

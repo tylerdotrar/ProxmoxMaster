@@ -2,7 +2,7 @@
 
 # Modular Script to add Clients to 'wg0.conf' & Print Client Configurations
 
-# Arbitrary Version Number: v1.0.0
+# Arbitrary Version Number: v1.0.1
 # Author: Tyler McCann (@tylerdotrar)
 # Link: https://github.com/tylerdotrar/ProxmoxMaster
 
@@ -12,6 +12,13 @@ red=$(tput setaf 1)
 green=$(tput setaf 2)
 yellow=$(tput setaf 3)
 white=$(tput setaf 7)
+
+
+# Validate script is being ran with elevated privileges
+if [ "$EUID" -ne 0 ]; then
+  echo "${red}[-] Script must be ran as root.${white}"
+  exit
+fi
 
 
 # Script Headers and Banners
@@ -32,8 +39,16 @@ line=$(repeat $length '-')
 echo "${green}
 .${line}.
 |${white}${header}${green}|
-'${line}'
-${white}"
+'${line}'${white}"
+
+
+# Print Public & Local IP to aid in determining server endpoint
+interface=$(ip route | grep "default" | awk -F 'dev ' '{print $2}' | awk '{print $1}')
+publicIP=$(curl -sL ipinfo.io/ip 2>/dev/null || wget -qO- ipinfo.io/ip 2>/dev/null)
+localIP=$(ip -br a | grep "${interface}" | awk '{print $3}' | awk -F '/' '{print $1}')
+
+echo -e "${green} > Server Public IP ${white}: ${publicIP}"
+echo -e "${green} > Server Local IP  ${white}: ${localIP}\n"
 
 
 # Loop Until Variables are Established
@@ -46,12 +61,12 @@ do
 
   # Prompt to Accept above Settings
   read -p "${yellow}[+] Accept the above settings? (yes/no)${white}                 : ${red}" acceptSettings
+  echo "${white}"
 
   if [[ $acceptSettings == 'yes' || $acceptSettings == 'y' ]]; then
-    echo ""
     break
-  else
-  	echo ""
+  elif [[ $acceptSettings == 'exit' || $acceptSettings == 'quit' ]]; then
+    exit 
   fi
 done
 
@@ -62,7 +77,8 @@ clientPubKey=$(echo $clientPrivKey | wg pubkey)
 serverPubKey=$(cat /etc/wireguard/server_public.key)
 
 
-### Part 1: Apply Changes Server-Side 
+### Part 1: Apply Changes Server-Side
+
 # Determine base tunnel IP range
 network=$(sed -n 's/^Address = \(.*\)/\1/p' /etc/wireguard/wg0.conf)
 
@@ -96,18 +112,19 @@ systemctl restart wg-quick@wg0.service
 
 ### Part 2: Print Client Configuration
 
-echo "${yellow}[+] EZ Client Configuration (Copy/Paste)${white}"
-
-echo "[Interface]
+echo "${yellow}[+] EZ Client Configuration (Copy/Paste)
+---${white}
+[Interface]
 PrivateKey = ${clientPrivKey} # Client 
 Address = ${clientNetwork}
 DNS = ${tunnelDNS}
-
+  
 [Peer]
 PublicKey = ${serverPubKey} # Server 
 AllowedIPs = 0.0.0.0/1, 128.0.0.0/1 
 Endpoint = ${serverEndpoint}
-"
+${yellow}---
+${white}"
 
 
 # Script Summary
@@ -115,3 +132,4 @@ echo "${yellow}[+] Summary
  o  Server-Side: added client '${clientID}' to 'wg0' using '${clientNetwork}' 
  o  Client-Side: generated user Wireguard configuration to copy & paste
 ${white}"
+
