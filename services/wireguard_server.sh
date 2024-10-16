@@ -2,7 +2,7 @@
 
 # Simple Wireguard Server Installation Script (tested on Ubuntu 22.04/24.04 LTS)
 
-# Arbitrary Version Number: v1.0.1
+# Arbitrary Version Number: v1.0.2
 # Author: Tyler McCann (@tylerdotrar)
 # Link: https://github.com/tylerdotrar/ProxmoxMaster
 
@@ -73,7 +73,7 @@ done
 # Updates & Dependencies
 echo "${yellow}[+] Installing dependencies...${white}"
 apt update && apt upgrade -y
-apt install wireguard wireguard-tools -y 
+apt install wireguard wireguard-tools ufw -y 
 echo -e "${yellow} o  Done.\n${white}"
 
 
@@ -109,7 +109,7 @@ ln -s /etc/wireguard/wg0.conf ~/wg0_link.conf
 
 # Download 'wireguard_client.sh' script for easy client configurations
 clientScript="https://raw.githubusercontent.com/tylerdotrar/ProxmoxMaster/refs/heads/main/services/wireguard_client.sh"
-curl ${clientScript} -o ~/wireguard_client2.sh 2>/dev/null || wget ${clientScript} -O ~/wireguard_client2.sh 2>/dev/null
+curl ${clientScript} -o ~/wireguard_client.sh 2>/dev/null || wget ${clientScript} -O ~/wireguard_client.sh 2>/dev/null
 chmod +x ~/wireguard_client.sh
 
 echo -e "${yellow} o  Done.\n${white}"
