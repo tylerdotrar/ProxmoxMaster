@@ -117,7 +117,7 @@ echo -e "${yellow} o  Done.\n${white}"
 
 # Script Summary
 echo "${yellow}[+] Summary
- o  Installed: wireguard, wireguard-tools
+ o  Installed: wireguard, wireguard-tools, ufw
  o  Generated server public & private keypair
  o  Generated 'wg0' tunnel configuration using '${interface}' 
  o  Enabled IPv4 packet forwarding
