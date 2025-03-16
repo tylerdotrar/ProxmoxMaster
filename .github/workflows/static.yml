@@ -6,11 +6,6 @@ on:
     branches: ["main"] # Runs on pushes targeting the default branch
   workflow_dispatch:   # Allows you to run this workflow manually from the Actions tab
 
-# Prevent pages-build-deployment from breaking returning the deleted README.md
-concurrency: 
-  group: ${{ github.workflow }}
-  cancel-in-progress: false
-
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
   contents: read
@@ -29,13 +24,13 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v4
 
+      # Overwrite README.md to be rendered
       - name: Configure Script for Hosting
         run: |
           targetScript='menu.sh'
           sed -i $'1s/^\uFEFF//' $targetScript                        # Remove BOM if it exists
-          awk '{ sub("\r$", ""); print }' $targetScript > index.html  # Remove CLRF terminators
-          rm README.md 2>/dev/null
-
+          awk '{ sub("\r$", ""); print }' $targetScript > README.md  # Remove CLRF terminators
+          
       # Host Repository
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
