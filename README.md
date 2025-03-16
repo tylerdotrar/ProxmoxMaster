@@ -11,7 +11,7 @@ bash -c "$(wget -qO- https://tylerdotrar.github.io/ProxmoxMaster)"
 bash -c "$(curl -sL https://tylerdotrar.github.io/ProxmoxMaster)"
 ```
 
-![Menu](https://github.com/tylerdotrar/ProxmoxMaster/assets/69973771/eafd49ca-d11f-41ed-b82f-9ba6c8eb3d07)
+![image](https://github.com/user-attachments/assets/a232df7e-63ab-4c20-9c8d-dffae335fca4)
 _(Note: `menu.sh` is being hosted via Github Pages as `index.html` in a separate branch)_
 
 ## Current Goals & Rules:
