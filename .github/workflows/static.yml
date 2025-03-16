@@ -1,13 +1,10 @@
-# Simple workflow for deploying static content to GitHub Pages
-name: Deploy static content to Pages
+# Simple workflow for hosting menu script via Github Pages
+name: Deploy Menu Content to Pages
 
 on:
-  # Runs on pushes targeting the default branch
   push:
-    branches: ["menu"]
-
-  # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
+    branches: ["main"] # Runs on pushes targeting the default branch
+  workflow_dispatch:   # Allows you to run this workflow manually from the Actions tab
 
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
@@ -15,14 +12,7 @@ permissions:
   pages: write
   id-token: write
 
-# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
-# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
-concurrency:
-  group: "pages"
-  cancel-in-progress: false
-
 jobs:
-  # Single deploy job since we're just deploying
   deploy:
     environment:
       name: github-pages
@@ -33,11 +23,19 @@ jobs:
         uses: actions/checkout@v4
       - name: Setup Pages
         uses: actions/configure-pages@v4
+
+      - name: Configure Script for Hosting
+        run: |
+          targetScript='menu.sh'
+          rm README.md 2>/dev/null
+          sed -i $'1s/^\uFEFF//' $targetScript                         # Remove BOM if it exists
+          awk '{ sub("\r$", ""); print }' $targetScript >> index.html  # Remove CLRF terminators
+
+      # Host Repository
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v2
+        uses: actions/upload-pages-artifact@v3
         with:
-          # Upload entire repository
-          path: '.'
+          path: '.' # Upload entire repository (can cause issues between README.md and index.html)
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v3
+        uses: actions/deploy-pages@v4
