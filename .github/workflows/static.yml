@@ -1,0 +1,41 @@
+# Simple workflow for hosting menu script via Github Pages
+name: Deploy Menu Content to Pages
+
+on:
+  push:
+    branches: ["main"] # Runs on pushes targeting the default branch
+  workflow_dispatch:   # Allows you to run this workflow manually from the Actions tab
+
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Configure Script for Hosting
+        run: |
+          targetScript='menu.sh'
+          rm README.md 2>/dev/null
+          sed -i $'1s/^\uFEFF//' $targetScript                         # Remove BOM if it exists
+          awk '{ sub("\r$", ""); print }' $targetScript >> index.html  # Remove CLRF terminators
+
+      # Host Repository
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.' # Upload entire repository (can cause issues between README.md and index.html)
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
