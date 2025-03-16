@@ -1,10 +1,10 @@
 { 
   "services": [
-    { "id": 01, "module": "wireguard_server.sh", "display": "Wireguard Server -- simple VPN server installer"        },
-    { "id": 02, "module": "minecraft_server.sh", "display": "Minecraft Server -- configurable game server installer" },
-    { "id": 03, "module": "homer.sh",            "display": "Homer            -- static homelab dashboard"           },
-    { "id": 04, "module": "wikijs.sh",           "display": "Wiki.js          -- wiki app built on Node.js"          },
-    { "id": 05, "module": "filegator.sh",        "display": "FileGator        -- multi-user web-based file manager"  }
+    { "id": 01, "module": "wireguard_server.sh", "display": "Wireguard Server --> simple VPN server installer"        },
+    { "id": 02, "module": "minecraft_server.sh", "display": "Minecraft Server --> configurable game server installer" },
+    { "id": 03, "module": "homer.sh",            "display": "Homer            --> static homelab dashboard"           },
+    { "id": 04, "module": "wikijs.sh",           "display": "Wiki.js          --> wiki app built on Node.js"          },
+    { "id": 05, "module": "filegator.sh",        "display": "FileGator        --> multi-user web-based file manager"  }
   ],
   "management": [
     { "id": 06, "module": "add_cpu_temp_readings.sh",       "display": "Add CPU temperature readings to Node summary page."   },
