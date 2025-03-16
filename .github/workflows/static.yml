@@ -28,8 +28,8 @@ jobs:
         run: |
           targetScript='menu.sh'
           rm README.md 2>/dev/null
-          sed -i $'1s/^\uFEFF//' $targetScript                         # Remove BOM if it exists
-          awk '{ sub("\r$", ""); print }' $targetScript >> index.html  # Remove CLRF terminators
+          sed -i $'1s/^\uFEFF//' $targetScript                        # Remove BOM if it exists
+          awk '{ sub("\r$", ""); print }' $targetScript > index.html  # Remove CLRF terminators
 
       # Host Repository
       - name: Upload artifact
