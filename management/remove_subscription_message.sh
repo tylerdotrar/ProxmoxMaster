@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # AUTHOR: Tyler McCann (@tylerdotrar)
-# ARBITRARY VERSION NUMBER: 1.0.3
+# ARBITRARY VERSION NUMBER: 1.0.4
 # LINK: https://github.com/tylerdotrar/ProxmoxMaster
 
 
@@ -36,7 +36,7 @@ else
     echo " o  Backup file created: '$sub_file_bak'"
     
     # Get line number of unique string (- 1) and replace contents
-    line=$(grep -n 'No valid subscription' $sub_file | cut -f1 -d:)
+    line=$(grep -n "('No valid subscription')" $sub_file | cut -f1 -d:)
     line_p2=$((line - 1))
     sed -i "${line_p2}c\\\t\t\t//Removing subscription message\n\t\t\tvoid({ //Ext.Msg.show({" $sub_file
     echo -e " o  Done.\n"
