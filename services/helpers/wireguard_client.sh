@@ -2,7 +2,7 @@
 
 # Modular Script to add Clients to 'wg0.conf' & Print Client Configurations
 
-# Arbitrary Version Number: v1.0.1
+# Arbitrary Version Number: v1.0.2
 # Author: Tyler McCann (@tylerdotrar)
 # Link: https://github.com/tylerdotrar/ProxmoxMaster
 
@@ -16,7 +16,7 @@ white=$(tput setaf 7)
 
 # Validate script is being ran with elevated privileges
 if [ "$EUID" -ne 0 ]; then
-  echo "${red}[-] Script must be ran as root.${white}"
+  echo "${red}[!] Error! Script must be ran as root.${white}"
   exit
 fi
 
@@ -75,6 +75,7 @@ done
 clientPrivKey=$(wg genkey)
 clientPubKey=$(echo $clientPrivKey | wg pubkey)
 serverPubKey=$(cat /etc/wireguard/server_public.key)
+presharedKey=$(wg genpsk)
 
 
 ### Part 1: Apply Changes Server-Side
@@ -102,8 +103,9 @@ clientNetwork=$(echo $network | awk -v clientNetwork="$fourthOctet" -F '[/.]' '{
 
 # Add Client Configuration to the 'wg0' Interface
 echo "[Peer] # ${clientID}
-PublicKey = ${clientPubKey} # Client 
-AllowedIPs = ${clientNetwork}
+PublicKey    = ${clientPubKey} # Client 
+PresharedKey = ${presharedKey}
+AllowedIPs   = ${clientNetwork}
 " >> /etc/wireguard/wg0.conf 
 
 # Restart Wireguard Service
@@ -116,13 +118,14 @@ echo "${yellow}[+] EZ Client Configuration (Copy/Paste)
 ---${white}
 [Interface]
 PrivateKey = ${clientPrivKey} # Client 
-Address = ${clientNetwork}
-DNS = ${tunnelDNS}
+Address    = ${clientNetwork}
+DNS        = ${tunnelDNS}
   
 [Peer]
-PublicKey = ${serverPubKey} # Server 
-AllowedIPs = 0.0.0.0/1, 128.0.0.0/1 
-Endpoint = ${serverEndpoint}
+PublicKey    = ${serverPubKey} # Server 
+PresharedKey = ${presharedKey}
+AllowedIPs   = 0.0.0.0/1, 128.0.0.0/1 
+Endpoint     = ${serverEndpoint}
 ${yellow}---
 ${white}"
 

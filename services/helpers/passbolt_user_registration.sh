@@ -3,9 +3,8 @@
 # Simple Passbolt script to allow for user registration without email
 
 # Author: Tyler McCann (tylerdotrar)
-# Arbitrary Version Number: v1.0.0
+# Arbitrary Version Number: v1.0.1
 # Link: https://github.com/tylerdotrar/ProxmoxMaster
-
 
 # Establish Pretty Colors
 red=$(tput setaf 1)
@@ -13,13 +12,11 @@ green=$(tput setaf 2)
 yellow=$(tput setaf 3)
 white=$(tput setaf 7)
 
-
 # Validate script is being ran with elevated privileges
 if [ "$EUID" -ne 0 ]; then
-  echo "${red}[-] Script must be ran as root.${white}"
+  echo "${red}[!] Error! Script must be ran as root.${white}"
   exit
 fi
-
 
 # Banner
 cat << 'EOF'
@@ -31,12 +28,15 @@ cat << 'EOF'
 
 EOF
 
+# Local Passbolt Server URL
+passboltURL="https://passbolt.domain" # Change me
 
-# Example Passbolt Server URL to Replace
-passboltURL="https://passbolt.domain"
+if [[ $passboltURL == 'https://passbolt.domain' ]]; then
+  echo -e "${red}[!] Error! Must configure the 'passboltURL' script variable.${white}"
+  exit
+fi
 
-
-# Username (aka email) to Register
+# Configure New User to Register
 while :
 do 
   echo "${yellow}[+] Variable Configuration${white}"
@@ -56,9 +56,9 @@ do
   fi
 done
 
-# Generate Recovery Link (bypassing email requirements)
+# Generate Registration Link (bypassing email requirements)
 cakeOut=$(su -c "/usr/share/php/passbolt/bin/cake passbolt register_user -u $registerUsername -f $registerFname -l $registerLname -r $registerRole" -s /bin/bash www-data) || exit 1
 registerURL=$(echo $cakeOut | awk '{print $NF}' | tail -n 1)
 
-echo "${green} >  Registration Link                      ${white} : ${passboltURL}${registerURL}"
+echo -e "${green} >  Registration Link :${white} ${registerURL}\n"
 

@@ -2,7 +2,7 @@
 
 # Simple Wireguard Server Installation Script (tested on Ubuntu 22.04/24.04 LTS)
 
-# Arbitrary Version Number: v1.0.2
+# Arbitrary Version Number: v1.0.3
 # Author: Tyler McCann (@tylerdotrar)
 # Link: https://github.com/tylerdotrar/ProxmoxMaster
 
@@ -16,7 +16,7 @@ white=$(tput setaf 7)
 
 # Validate script is being ran with elevated privileges
 if [ "$EUID" -ne 0 ]; then
-  echo "${red}[-] Script must be ran as root.${white}"
+  echo "${red}[!] Error! Script must be ran as root.${white}"
   exit
 fi
 
@@ -86,12 +86,12 @@ serverPrivKey=$(cat /etc/wireguard/server_private.key)
 
 # Generate baseline 'wg0' configuration
 echo "[Interface]
-Address = ${tunnelNetwork}
+Address    = ${tunnelNetwork}
 ListenPort = ${listeningPort}
 PrivateKey = ${serverPrivKey} # Server
 # Tunnel Enabled: enable packet forwarding
-PostUp = ufw route allow in on wg0 out on ${interface}
-PostUp = iptables -t nat -I POSTROUTING -o ${interface} -j MASQUERADE
+PostUp  = ufw route allow in on wg0 out on ${interface}
+PostUp  = iptables -t nat -I POSTROUTING -o ${interface} -j MASQUERADE
 # Tunnel Disabled: disable packet forwarding
 PreDown = ufw route delete allow in on wg0 out on ${interface}
 PreDown = iptables -t nat -D POSTROUTING -o ${interface} -j MASQUERADE
@@ -105,10 +105,10 @@ sysctl -p
 systemctl enable wg-quick@wg0.service --now
 
 # Create symbolic link to 'wg0.conf' within the home directory
-ln -s /etc/wireguard/wg0.conf ~/wg0_link.conf
+ln -s /etc/wireguard/wg0.conf ~/wg0.conf.lnk
 
 # Download 'wireguard_client.sh' script for easy client configurations
-clientScript="https://raw.githubusercontent.com/tylerdotrar/ProxmoxMaster/refs/heads/main/services/wireguard_client.sh"
+clientScript="https://raw.githubusercontent.com/tylerdotrar/ProxmoxMaster/refs/heads/main/services/helpers/wireguard_client.sh"
 curl ${clientScript} -o ~/wireguard_client.sh 2>/dev/null || wget ${clientScript} -O ~/wireguard_client.sh 2>/dev/null
 chmod +x ~/wireguard_client.sh
 

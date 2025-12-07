@@ -3,9 +3,8 @@
 # Simple Passbolt script to allow for user recovery without email
 
 # Author: Tyler McCann (tylerdotrar)
-# Arbitrary Version Number: v1.0.0
+# Arbitrary Version Number: v1.0.1
 # Link: https://github.com/tylerdotrar/ProxmoxMaster
-
 
 # Establish Pretty Colors
 red=$(tput setaf 1)
@@ -13,13 +12,11 @@ green=$(tput setaf 2)
 yellow=$(tput setaf 3)
 white=$(tput setaf 7)
 
-
 # Validate script is being ran with elevated privileges
 if [ "$EUID" -ne 0 ]; then
-  echo "${red}[-] Script must be ran as root.${white}"
+  echo "${red}[!] Error! Script must be ran as root.${white}"
   exit
 fi
-
 
 # Banner
 cat << 'EOF'
@@ -31,15 +28,15 @@ cat << 'EOF'
 
 EOF
 
+# Local Passbolt Server URL
+passboltURL="https://passbolt.domain" # Change me
 
-# Example Passbolt Server URL to Replace
-passboltURL="https://passbolt.domain"
-
+if [[ $passboltURL == 'https://passbolt.domain' ]]; then
+  echo -e "${red}[!] Error! Must configure the 'passboltURL' script variable.${white}"
+  exit
+fi
 
 # Username (aka email) to Recover
-#read -p "${yellow}[+] Input Username to Recover : ${white}" recoverUsername
-
-# Username (aka email) to Register
 while :
 do 
   echo "${yellow}[+] Variable Configuration${white}"
@@ -60,5 +57,5 @@ done
 cakeOut=$(su -c "/usr/share/php/passbolt/bin/cake passbolt recover_user --create --username $recoverUsername" -s /bin/bash www-data) || exit 1
 recoveryURL=$(echo $cakeOut | awk '{print $NF}' | tail -n 1)
 
-echo "${green} >  Recovery Link                       :${white} ${passboltURL}${recoveryURL}"
+echo -e "${green} >  Recovery Link :${white} ${recoveryURL}\n"
 
